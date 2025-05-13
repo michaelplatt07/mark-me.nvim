@@ -1,0 +1,154 @@
+-- Set the path so local installed rocks can be imported
+package.path = ".luarocks/share/lua/5.3/?.lua;" .. package.path
+-- Set the path so local modules from the plugin can be imported
+package.path = "./lua/?.lua;" .. package.path
+
+local state
+local luaunit = require("luaunit")
+
+-- Mock Vim so we can mock returns on method bindings
+vim = {
+	api = {},
+}
+-- End mocking
+
+require("luacov")
+
+TestState = {}
+
+-- Setting up and tearing down for each test
+function TestState:setup()
+	state = require("mark-me.state")
+end
+
+function TestState:teardown()
+	package.loaded["mark-me.state"] = nil
+end
+-- End setup and teardown
+
+function TestState.test_has_dup_returns_false_for_empty()
+	local has_dup = state.has_dup(0, 0, "test_name")
+	luaunit.assertEquals(has_dup, false)
+end
+
+function TestState.test_has_dup_returns_false_for_non_empty()
+	table.insert(state.marks, { line = 1, col = 1, buff_name = "another_name" })
+	table.insert(state.marks, { line = 2, col = 2, buff_name = "third_name" })
+	table.insert(state.marks, { line = 3, col = 3, buff_name = "fourth_name" })
+	local has_dup = state.has_dup(0, 0, "test_name")
+	luaunit.assertEquals(has_dup, false)
+end
+
+function TestState.test_has_dup_returns_true_for_non_empty()
+	table.insert(state.marks, { line = 0, col = 0, buff_name = "test_name" })
+	table.insert(state.marks, { line = 1, col = 1, buff_name = "another_name" })
+	table.insert(state.marks, { line = 2, col = 2, buff_name = "third_name" })
+	table.insert(state.marks, { line = 3, col = 3, buff_name = "fourth_name" })
+	local has_dup = state.has_dup(0, 0, "test_name")
+	luaunit.assertEquals(has_dup, true)
+end
+
+function TestState.test_add_mark_no_dup()
+	luaunit.assertEquals(#state.marks, 0)
+	state.add_mark(0, 1, "this_is_a_buffer_name")
+	luaunit.assertEquals(#state.marks, 1)
+	luaunit.assertEquals(state.marks[1], { line = 0, col = 1, buff_name = "this_is_a_buffer_name" })
+end
+
+function TestState.test_add_mark_with_dup()
+	table.insert(state.marks, { line = 0, col = 0, buff_name = "test_name" })
+	table.insert(state.marks, { line = 1, col = 1, buff_name = "another_name" })
+	table.insert(state.marks, { line = 2, col = 2, buff_name = "third_name" })
+	table.insert(state.marks, { line = 3, col = 3, buff_name = "fourth_name" })
+	luaunit.assertEquals(#state.marks, 4)
+	state.add_mark(0, 0, "test_name")
+	luaunit.assertEquals(#state.marks, 4)
+end
+
+function TestState.test_add_mark_same_buff_different_line()
+	table.insert(state.marks, { line = 0, col = 0, buff_name = "test_name" })
+	table.insert(state.marks, { line = 1, col = 1, buff_name = "another_name" })
+	table.insert(state.marks, { line = 2, col = 2, buff_name = "third_name" })
+	table.insert(state.marks, { line = 3, col = 3, buff_name = "fourth_name" })
+	luaunit.assertEquals(#state.marks, 4)
+	state.add_mark(10, 0, "this_is_a_buffer_name")
+	luaunit.assertEquals(state.marks[5], { line = 10, col = 0, buff_name = "this_is_a_buffer_name" })
+	luaunit.assertEquals(#state.marks, 5)
+end
+
+function TestState.test_add_mark_same_buff_different_col()
+	table.insert(state.marks, { line = 0, col = 0, buff_name = "test_name" })
+	table.insert(state.marks, { line = 1, col = 1, buff_name = "another_name" })
+	table.insert(state.marks, { line = 2, col = 2, buff_name = "third_name" })
+	table.insert(state.marks, { line = 3, col = 3, buff_name = "fourth_name" })
+	luaunit.assertEquals(#state.marks, 4)
+	state.add_mark(0, 100, "this_is_a_buffer_name")
+	luaunit.assertEquals(state.marks[5], { line = 0, col = 100, buff_name = "this_is_a_buffer_name" })
+	luaunit.assertEquals(#state.marks, 5)
+end
+
+function TestState.test_remove_mark_out_of_bounds()
+	table.insert(state.marks, { line = 0, col = 0, buff_name = "test_name" })
+	table.insert(state.marks, { line = 1, col = 1, buff_name = "another_name" })
+	table.insert(state.marks, { line = 2, col = 2, buff_name = "third_name" })
+	table.insert(state.marks, { line = 3, col = 3, buff_name = "fourth_name" })
+	local ok, err = pcall(function()
+		state.remove_mark(10)
+	end)
+	luaunit.assertFalse(ok)
+	luaunit.assertEquals(tostring(err), "./lua/mark-me/state.lua:47: Idx is out of bounds for state")
+	luaunit.assertEquals(state.marks[1], { line = 0, col = 0, buff_name = "test_name" })
+	luaunit.assertEquals(#state.marks, 4)
+end
+
+function TestState.test_remove_mark()
+	table.insert(state.marks, { line = 0, col = 0, buff_name = "test_name" })
+	table.insert(state.marks, { line = 1, col = 1, buff_name = "another_name" })
+	table.insert(state.marks, { line = 2, col = 2, buff_name = "third_name" })
+	table.insert(state.marks, { line = 3, col = 3, buff_name = "fourth_name" })
+	state.remove_mark(1)
+	luaunit.assertEquals(state.marks[1], { line = 1, col = 1, buff_name = "another_name" })
+	luaunit.assertEquals(#state.marks, 3)
+end
+
+function TestState.test_remove_mark_middle_of_list()
+	table.insert(state.marks, { line = 0, col = 0, buff_name = "test_name" })
+	table.insert(state.marks, { line = 1, col = 1, buff_name = "another_name" })
+	table.insert(state.marks, { line = 2, col = 2, buff_name = "third_name" })
+	table.insert(state.marks, { line = 3, col = 3, buff_name = "fourth_name" })
+	state.remove_mark(3)
+	luaunit.assertEquals(state.marks[3], { line = 3, col = 3, buff_name = "fourth_name" })
+	luaunit.assertEquals(#state.marks, 3)
+end
+
+function TestState.test_display_mark()
+	table.insert(state.marks, { line = 0, col = 0, buff_name = "test_name" })
+	table.insert(state.marks, { line = 1, col = 1, buff_name = "another_name" })
+	table.insert(state.marks, { line = 2, col = 2, buff_name = "third_name" })
+	table.insert(state.marks, { line = 3, col = 3, buff_name = "fourth_name" })
+	local display_mark = state.display_mark(1)
+	luaunit.assertEquals(display_mark, "0 | 0 | test_name")
+end
+
+function TestState.test_display_mark_middle_of_list()
+	table.insert(state.marks, { line = 0, col = 0, buff_name = "test_name" })
+	table.insert(state.marks, { line = 1, col = 1, buff_name = "another_name" })
+	table.insert(state.marks, { line = 2, col = 2, buff_name = "third_name" })
+	table.insert(state.marks, { line = 3, col = 3, buff_name = "fourth_name" })
+	local display_mark = state.display_mark(3)
+	luaunit.assertEquals(display_mark, "2 | 2 | third_name")
+end
+
+function TestState.test_update_selected_row()
+	vim.api.nvim_win_get_cursor = function()
+		return { 3, 0 }
+	end
+
+	table.insert(state.markToBufMap, { line = 0, col = 0, buff_name = "test_name" })
+	table.insert(state.markToBufMap, { line = 1, col = 1, buff_name = "another_name" })
+	table.insert(state.markToBufMap, { line = 2, col = 2, buff_name = "third_name" })
+	table.insert(state.markToBufMap, { line = 3, col = 3, buff_name = "fourth_name" })
+	state.update_selected_row()
+	luaunit.assertEquals(state.selectedRow, { line = 2, col = 2, buff_name = "third_name" })
+end
+return TestState
