@@ -11,7 +11,7 @@ end
 function keybindings.update_key_binding(func, custombind) end
 
 function keybindings.map_keys(buf)
-	vim.api.nvim_buf_set_keymap(buf, "n", "<leader>o", ':lua require("markme-me.markme").go_to_mark()<CR>', {})
+	vim.api.nvim_buf_set_keymap(buf, "n", "<leader>o", ':lua require("mark-me.markme").go_to_mark()<CR>', {})
 	-- vim.api.nvim_buf_set_keymap(buf, "n", "<CR>", ':lua require("buffer-me.bufferme").open_selected_buffer()<CR>', {})
 	-- vim.api.nvim_buf_set_keymap(
 	-- 	buf,
