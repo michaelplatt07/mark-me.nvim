@@ -46,20 +46,15 @@ function markme.open_window()
 end
 
 function markme.go_to_mark()
-	-- local selected_buf_handle = nil
-	-- if state.selectedRow then
-	-- 	-- TODO(map) Swap out tracking the buffer list window for the same way the hotswap is being handled in state
-	-- 	local win_handle = vim.api.nvim_get_current_win()
-	-- 	vim.api.nvim_win_close(win_handle, true)
-	-- 	vim.api.nvim_win_close(state.hotswapWindowHandle, true)
-	-- 	selected_buf_handle = vim.fn.bufnr(state.bufList[state.selectedRow])
-	-- elseif state.currSelectedBuffer then
-	-- 	selected_buf_handle = vim.fn.bufnr(state.bufList[state.currSelectedBuffer])
-	-- else
-	-- 	error("There was problem opening a buffer")
-	-- end
-	-- vim.api.nvim_set_current_buf(selected_buf_handle)
-	-- state.clear_selected_row()
+	if state.selectedRow then
+		local win_handle = vim.api.nvim_get_current_win()
+		vim.api.nvim_win_close(win_handle, true)
+		local selected_buf_handle = vim.fn.bufnr(state.markToBufMap[state.selectedRow])
+		vim.api.nvim_set_current_buf(selected_buf_handle)
+		state.clear_selected_row()
+	else
+		error("Could not get to mark")
+	end
 end
 
 return markme

@@ -3,9 +3,7 @@ local keybindings = {
 }
 
 function keybindings.remove()
-	print("Removing marks")
 	require("mark-me.markme").remove_mark()
-	print("Rerendering")
 	require("mark-me.windower").re_render_mark_list_lines()
 	vim.api.nvim_command("redraw")
 end
