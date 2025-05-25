@@ -45,13 +45,50 @@ function markme.open_window()
 	keybindings.map_keys(state.markBufHandle)
 end
 
+function markme.move_mark_up()
+	local line_num = vim.api.nvim_win_get_cursor(0)[1]
+	state.move_mark_up(line_num)
+end
+
+function markme.move_mark_down()
+	local line_num = vim.api.nvim_win_get_cursor(0)[1]
+	state.move_mark_down(line_num)
+end
+
 function markme.go_to_mark()
 	if state.selectedRow then
 		local win_handle = vim.api.nvim_get_current_win()
 		vim.api.nvim_win_close(win_handle, true)
-		local selected_buf_handle = vim.fn.bufnr(state.markToBufMap[state.selectedRow])
+		local selected_buf_handle = vim.fn.bufnr(state.selectedRow["buff_name"])
 		vim.api.nvim_set_current_buf(selected_buf_handle)
-		state.clear_selected_row()
+		vim.api.nvim_win_set_cursor(0, { state.selectedRow["line"], state.selectedRow["col"] })
+		state.clear_selected_row(nil)
+	else
+		error("Could not get to mark")
+	end
+end
+
+function markme.go_back_mark()
+	if state.selectedRow then
+		local win_handle = vim.api.nvim_get_current_win()
+		vim.api.nvim_win_close(win_handle, true)
+		local selected_buf_handle = vim.fn.bufnr(state.selectedRow["buff_name"])
+		vim.api.nvim_set_current_buf(selected_buf_handle)
+		vim.api.nvim_win_set_cursor(0, { state.selectedRow["line"], state.selectedRow["col"] })
+		state.clear_selected_row(nil)
+	else
+		error("Could not get to mark")
+	end
+end
+
+function markme.go_forward_mark()
+	if state.selectedRow then
+		local win_handle = vim.api.nvim_get_current_win()
+		vim.api.nvim_win_close(win_handle, true)
+		local selected_buf_handle = vim.fn.bufnr(state.selectedRow["buff_name"])
+		vim.api.nvim_set_current_buf(selected_buf_handle)
+		vim.api.nvim_win_set_cursor(0, { state.selectedRow["line"], state.selectedRow["col"] })
+		state.clear_selected_row(nil)
 	else
 		error("Could not get to mark")
 	end
