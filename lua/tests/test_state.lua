@@ -151,4 +151,73 @@ function TestState.test_update_selected_row()
 	state.update_selected_row()
 	luaunit.assertEquals(state.selectedRow, { line = 2, col = 2, buff_name = "third_name" })
 end
+
+function TestState.test_move_mark_up()
+	table.insert(state.marks, { line = 0, col = 0, buff_name = "test_name" })
+	table.insert(state.marks, { line = 1, col = 1, buff_name = "another_name" })
+	table.insert(state.marks, { line = 2, col = 2, buff_name = "third_name" })
+	table.insert(state.marks, { line = 3, col = 3, buff_name = "fourth_name" })
+	table.insert(state.markToBufMap, { line = 0, col = 0, buff_name = "test_name" })
+	table.insert(state.markToBufMap, { line = 1, col = 1, buff_name = "another_name" })
+	table.insert(state.markToBufMap, { line = 2, col = 2, buff_name = "third_name" })
+	table.insert(state.markToBufMap, { line = 3, col = 3, buff_name = "fourth_name" })
+	luaunit.assertEquals(state.marks[2], { line = 1, col = 1, buff_name = "another_name" })
+	luaunit.assertEquals(state.markToBufMap[2], { line = 1, col = 1, buff_name = "another_name" })
+	state.move_mark_up(2)
+	luaunit.assertEquals(state.marks[1], { line = 1, col = 1, buff_name = "another_name" })
+	luaunit.assertEquals(state.markToBufMap[1], { line = 1, col = 1, buff_name = "another_name" })
+end
+
+function TestState.test_move_mark_up_out_of_bounds()
+	table.insert(state.marks, { line = 0, col = 0, buff_name = "test_name" })
+	table.insert(state.marks, { line = 1, col = 1, buff_name = "another_name" })
+	table.insert(state.marks, { line = 2, col = 2, buff_name = "third_name" })
+	table.insert(state.marks, { line = 3, col = 3, buff_name = "fourth_name" })
+	table.insert(state.markToBufMap, { line = 0, col = 0, buff_name = "test_name" })
+	table.insert(state.markToBufMap, { line = 1, col = 1, buff_name = "another_name" })
+	table.insert(state.markToBufMap, { line = 2, col = 2, buff_name = "third_name" })
+	table.insert(state.markToBufMap, { line = 3, col = 3, buff_name = "fourth_name" })
+	luaunit.assertEquals(state.markToBufMap[1], { line = 0, col = 0, buff_name = "test_name" })
+	state.move_mark_up(1)
+	luaunit.assertEquals(state.markToBufMap[1], { line = 0, col = 0, buff_name = "test_name" })
+end
+
+function TestState.test_move_mark_down()
+	table.insert(state.marks, { line = 0, col = 0, buff_name = "test_name" })
+	table.insert(state.marks, { line = 1, col = 1, buff_name = "another_name" })
+	table.insert(state.marks, { line = 2, col = 2, buff_name = "third_name" })
+	table.insert(state.marks, { line = 3, col = 3, buff_name = "fourth_name" })
+	table.insert(state.markToBufMap, { line = 0, col = 0, buff_name = "test_name" })
+	table.insert(state.markToBufMap, { line = 1, col = 1, buff_name = "another_name" })
+	table.insert(state.markToBufMap, { line = 2, col = 2, buff_name = "third_name" })
+	table.insert(state.markToBufMap, { line = 3, col = 3, buff_name = "fourth_name" })
+	luaunit.assertEquals(state.marks[2], { line = 1, col = 1, buff_name = "another_name" })
+	luaunit.assertEquals(state.markToBufMap[2], { line = 1, col = 1, buff_name = "another_name" })
+	state.move_mark_down(2)
+	luaunit.assertEquals(state.marks[3], { line = 1, col = 1, buff_name = "another_name" })
+	luaunit.assertEquals(state.markToBufMap[3], { line = 1, col = 1, buff_name = "another_name" })
+end
+
+function TestState.test_move_mark_down_out_of_bounds()
+	table.insert(state.marks, { line = 0, col = 0, buff_name = "test_name" })
+	table.insert(state.marks, { line = 1, col = 1, buff_name = "another_name" })
+	table.insert(state.marks, { line = 2, col = 2, buff_name = "third_name" })
+	table.insert(state.marks, { line = 3, col = 3, buff_name = "fourth_name" })
+	table.insert(state.markToBufMap, { line = 0, col = 0, buff_name = "test_name" })
+	table.insert(state.markToBufMap, { line = 1, col = 1, buff_name = "another_name" })
+	table.insert(state.markToBufMap, { line = 2, col = 2, buff_name = "third_name" })
+	table.insert(state.markToBufMap, { line = 3, col = 3, buff_name = "fourth_name" })
+	luaunit.assertEquals(state.markToBufMap[4], { line = 3, col = 3, buff_name = "fourth_name" })
+	state.move_mark_down(4)
+	luaunit.assertEquals(state.markToBufMap[4], { line = 3, col = 3, buff_name = "fourth_name" })
+end
+
+function TestState.test_move_mark_up_by_num()
+	-- luaunit.assertFalse("TODO(map) Implement feature to move a mark up by some number")
+end
+
+function TestState.test_move_mark_down_by_num()
+	-- luaunit.assertFalse("TODO(map) Implement feature to move mark down by some number")
+end
+
 return TestState

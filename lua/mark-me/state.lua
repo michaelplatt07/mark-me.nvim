@@ -57,6 +57,52 @@ function state.display_mark(idx)
 	return string.format("%d | %d | %s", mark_info.line, mark_info.col, mark_info.buff_name)
 end
 
+--- Moves marks up in the list
+--- @param rowIdx number The current row that will be moved up by one
+function state.move_mark_up(rowIdx)
+	if rowIdx - 1 > 0 then
+		local tmpMark = state.marks[rowIdx - 1]
+		local tmpMarkToBuf = state.markToBufMap[rowIdx - 1]
+		-- Update the marks list
+		state.marks[rowIdx - 1] = state.marks[rowIdx]
+		state.marks[rowIdx] = tmpMark
+		-- Update the mark to buffer mapping
+		state.markToBufMap[rowIdx - 1] = state.markToBufMap[rowIdx]
+		state.markToBufMap[rowIdx] = tmpMarkToBuf
+	end
+end
+
+--- Moves marks down in the list
+--- @param rowIdx number The current row that will be moved down by one
+function state.move_mark_down(rowIdx)
+	if rowIdx + 1 <= #state.marks then
+		local tmpMark = state.marks[rowIdx + 1]
+		local tmpMarkToBuf = state.markToBufMap[rowIdx + 1]
+		-- Update the marks list
+		state.marks[rowIdx + 1] = state.marks[rowIdx]
+		state.marks[rowIdx] = tmpMark
+		-- Update the mark to buffer mapping
+		state.markToBufMap[rowIdx + 1] = state.markToBufMap[rowIdx]
+		state.markToBufMap[rowIdx] = tmpMarkToBuf
+	end
+end
+
+--- Moves a mark up in the list by a number
+--- @param rowIdx number The current row that will be moved up by one
+--- @param numPosUp number The amount of rows that the mark should be moved up
+function state.move_mark_up_by_num(rowIdx, numPosUp)
+	-- TODO(map) This should have a check that if the number takes you beyond the top of the list it just goes to top
+	-- Write a test for this
+end
+
+--- Moves a mark down in the list by a number
+--- @param rowIdx number The current row that will be moved down by one
+--- @param numPosDown number The amount of rows that the mark should be moved up
+function state.move_mark_down_by_num(rowIdx, numPosDown)
+	-- TODO(map) This should have a check that if the number takes you beyond the top of the list it just goes to top
+	-- Write a test for this
+end
+
 --- Clears the selected row from the state
 function state.clear_selected_row()
 	state.selectedRow = nil
