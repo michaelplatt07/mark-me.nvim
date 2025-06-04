@@ -55,12 +55,12 @@ end
 
 --- Wrapper function around Neovim's line highlight functionality
 function windower.highlight_current_mark(line_num)
-	vim.api.nvim_buf_add_highlight(0, -1, "CursorLine", line_num, 0, -1)
+	vim.api.nvim_buf_add_highlight(state.markBufHandle, -1, "CursorLine", line_num, 0, -1)
 end
 
 --- Wrapper function around Neovim's line highlight removal functionality
 function windower.remove_highlight(line_num)
-	vim.api.nvim_buf_clear_namespace(0, -1, line_num, -1)
+	vim.api.nvim_buf_clear_namespace(state.markBufHandle, -1, line_num, -1)
 end
 
 return windower
