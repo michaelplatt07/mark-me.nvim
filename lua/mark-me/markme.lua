@@ -13,7 +13,6 @@ function markme.add_mark()
 	local line_num = cursor_info[1]
 	local col_num = cursor_info[2]
 	state.add_mark(line_num, col_num, buff_name)
-	windower.highlight_current_mark(state.currentMarkHandle)
 end
 
 --- Entry point for removing marks
@@ -21,7 +20,6 @@ function markme.remove_mark()
 	local line_num = vim.api.nvim_win_get_cursor(0)[1]
 	windower.remove_highlight(state.currentMarkHandle)
 	state.remove_mark(line_num)
-	windower.highlight_current_mark(state.currentMarkHandle)
 end
 
 --- Entry point for opening window
