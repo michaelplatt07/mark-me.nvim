@@ -13,12 +13,15 @@ function markme.add_mark()
 	local line_num = cursor_info[1]
 	local col_num = cursor_info[2]
 	state.add_mark(line_num, col_num, buff_name)
+	windower.highlight_current_mark(state.currentMarkHandle)
 end
 
 --- Entry point for removing marks
 function markme.remove_mark()
 	local line_num = vim.api.nvim_win_get_cursor(0)[1]
+	windower.remove_highlight(state.currentMarkHandle)
 	state.remove_mark(line_num)
+	windower.highlight_current_mark(state.currentMarkHandle)
 end
 
 --- Entry point for opening window
@@ -55,8 +58,26 @@ function markme.move_mark_down()
 	state.move_mark_down(line_num)
 end
 
+function markme.move_up_stack()
+	state.move_up_stack()
+	markme.go_to_mark()
+end
+
+function markme.move_down_stack()
+	state.move_down_stack()
+	markme.go_to_mark()
+end
+
 function markme.go_to_mark()
 	if state.selectedRow then
+		local win_handle = vim.api.nvim_get_current_win()
+		vim.api.nvim_win_close(win_handle, true)
+		local selected_buf_handle = vim.fn.bufnr(state.selectedRow["buff_name"])
+		vim.api.nvim_set_current_buf(selected_buf_handle)
+		vim.api.nvim_win_set_cursor(0, { state.selectedRow["line"], state.selectedRow["col"] })
+		state.clear_selected_row(nil)
+	elseif state.currentMarkHandle then
+		error("TODO(map) Fix implementation")
 		local win_handle = vim.api.nvim_get_current_win()
 		vim.api.nvim_win_close(win_handle, true)
 		local selected_buf_handle = vim.fn.bufnr(state.selectedRow["buff_name"])
