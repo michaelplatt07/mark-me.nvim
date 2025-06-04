@@ -55,15 +55,16 @@ function windower.close_window()
 end
 
 --- Wrapper function around Neovim's line highlight functionality
+--- @param line_num number The 1-indexed value of the line number
 function windower.highlight_current_mark(line_num)
-	print("state.markBufHandle = ", state.markBufHandle)
-	print("line_num = ", line_num)
-	vim.api.nvim_buf_add_highlight(state.markBufHandle, -1, "CursorLine", line_num, 0, -1)
+	-- Subtract one from the line_num value because lua is 1 indexed
+	vim.api.nvim_buf_add_highlight(state.markBufHandle, -1, "CursorLine", line_num - 1, 0, -1)
 end
 
 --- Wrapper function around Neovim's line highlight removal functionality
+--- @param line_num number The 1-indexed value of the line number
 function windower.remove_highlight(line_num)
-	vim.api.nvim_buf_clear_namespace(state.markBufHandle, -1, line_num, -1)
+	vim.api.nvim_buf_clear_namespace(state.markBufHandle, -1, line_num - 1, -1)
 end
 
 return windower
