@@ -18,7 +18,6 @@ end
 --- Entry point for removing marks
 function markme.remove_mark()
 	local line_num = vim.api.nvim_win_get_cursor(0)[1]
-	windower.remove_highlight(state.currentMarkHandle)
 	state.remove_mark(line_num)
 end
 
