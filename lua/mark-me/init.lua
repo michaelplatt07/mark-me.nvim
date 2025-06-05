@@ -18,4 +18,16 @@ function M.open_window()
 	markme.open_window()
 end
 
+function M.go_back_mark()
+	markme.go_back_mark()
+end
+
+function M.go_forward_mark()
+	markme.go_forward_mark()
+end
+
+function M.go_to_mark()
+	markme.go_to_mark()
+end
+
 return M
