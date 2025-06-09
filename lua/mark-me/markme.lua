@@ -129,7 +129,7 @@ function markme.pop_and_go_back()
 		end
 		-- Pop first since this will handle updating the currentMarkHandle and then we can open
 		local empty = state.pop_mark(nil)
-		if ~empty then
+		if empty == false then
 			local selectedRow = state.markToBufMap[state.currentMarkHandle]
 			local selected_buf_handle = vim.fn.bufnr(selectedRow["buff_name"])
 			vim.api.nvim_set_current_buf(selected_buf_handle)
