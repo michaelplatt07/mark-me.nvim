@@ -151,7 +151,9 @@ end
 --- Pop the value off the stack as part of going back in the buffer stack
 --- @param selectedIdx number The index of the buffer to be popped off the stack. If nil is provided it will remove the most recently added value
 function state.pop_mark(selectedIdx)
-	if selectedIdx == nil then
+	if #state.marks == 0 or #state.markToBufMap == 0 then
+		return
+	elseif selectedIdx == nil then
 		table.remove(state.marks, #state.marks)
 		table.remove(state.markToBufMap, #state.markToBufMap)
 	else
