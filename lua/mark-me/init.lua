@@ -5,7 +5,7 @@ local M = {}
 function M.setup(config)
 	if config ~= nil then
 		if config.keys ~= nil then
-			if config.autopop ~= nil and config.autopop == true then
+			if config.autopop ~= nil then
 				state.autopop = true
 			end
 		end
