@@ -23,7 +23,11 @@ function M.open_window()
 end
 
 function M.go_back_mark()
-	markme.go_back_mark()
+	if state.autopop then
+		markme.pop_and_go_back()
+	else
+		markme.go_back_mark()
+	end
 end
 
 function M.go_forward_mark()
