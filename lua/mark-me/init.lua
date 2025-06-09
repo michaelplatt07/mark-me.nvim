@@ -5,10 +5,8 @@ local M = {}
 function M.setup(config)
 	if config ~= nil then
 		if config.keys ~= nil then
-			for func, custombind in pairs(config.keys) do
-				if config.autopop ~= nil and config.autopop == true then
-					state.autopop = true
-				end
+			if config.autopop ~= nil and config.autopop == true then
+				state.autopop = true
 			end
 		end
 	end
