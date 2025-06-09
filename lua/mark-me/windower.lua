@@ -22,7 +22,7 @@ function windower.render_mark_list_lines()
 	end
 
 	vim.api.nvim_buf_set_lines(state.markBufHandle, 0, #lines, false, lines)
-	if #state.marks > 0 and #state.markBufHandle > 0 then
+	if #state.marks > 0 and #state.markToBufMap > 0 then
 		windower.highlight_current_mark(state.currentMarkHandle)
 	end
 	vim.api.nvim_buf_set_option(state.markBufHandle, "modifiable", false)
@@ -37,7 +37,7 @@ function windower.re_render_mark_list_lines()
 	end
 
 	vim.api.nvim_buf_set_lines(state.markBufHandle, 0, #lines, false, lines)
-	if #state.marks > 0 and #state.markBufHandle > 0 then
+	if #state.marks > 0 and #state.markToBufMap > 0 then
 		windower.highlight_current_mark(state.currentMarkHandle)
 	end
 	vim.api.nvim_buf_set_option(state.markBufHandle, "modifiable", false)
