@@ -17,12 +17,12 @@ end
 function windower.render_mark_list_lines()
 	vim.api.nvim_buf_set_option(state.markBufHandle, "modifiable", true)
 	local lines = {}
-	for idx, markInfo in pairs(state.marks) do
-		table.insert(state.markToBufMap, markInfo)
+	for idx, _ in pairs(state.marks) do
 		table.insert(lines, state.display_mark(idx))
 	end
 
 	vim.api.nvim_buf_set_lines(state.markBufHandle, 0, #lines, false, lines)
+	windower.highlight_current_mark(state.currentMarkHandle)
 	vim.api.nvim_buf_set_option(state.markBufHandle, "modifiable", false)
 end
 
@@ -30,13 +30,12 @@ function windower.re_render_mark_list_lines()
 	vim.api.nvim_buf_set_option(state.markBufHandle, "modifiable", true)
 	vim.api.nvim_buf_set_lines(state.markBufHandle, 0, -1, false, {})
 	local lines = {}
-	state.markToBufMap = {}
-	for idx, markInfo in ipairs(state.marks) do
-		table.insert(state.markToBufMap, markInfo)
+	for idx, _ in ipairs(state.marks) do
 		table.insert(lines, state.display_mark(idx))
 	end
 
 	vim.api.nvim_buf_set_lines(state.markBufHandle, 0, #lines, false, lines)
+	windower.highlight_current_mark(state.currentMarkHandle)
 	vim.api.nvim_buf_set_option(state.markBufHandle, "modifiable", false)
 end
 
@@ -51,6 +50,19 @@ function windower.close_window()
 	-- Close the buffers and recreate them
 	vim.api.nvim_buf_delete(state.markBufHandle, { force = true })
 	state.markBufHandle = vim.api.nvim_create_buf(false, true)
+end
+
+--- Wrapper function around Neovim's line highlight functionality
+--- @param line_num number The 1-indexed value of the line number
+function windower.highlight_current_mark(line_num)
+	-- Subtract one from the line_num value because lua is 1 indexed
+	vim.api.nvim_buf_add_highlight(state.markBufHandle, -1, "CursorLine", line_num - 1, 0, -1)
+end
+
+--- Wrapper function around Neovim's line highlight removal functionality
+--- @param line_num number The 1-indexed value of the line number
+function windower.remove_highlight(line_num)
+	vim.api.nvim_buf_clear_namespace(state.markBufHandle, -1, line_num - 1, -1)
 end
 
 return windower

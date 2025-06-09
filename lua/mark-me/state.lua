@@ -4,6 +4,7 @@ local state = {
 	selectedRow = nil,
 	windowHandle = nil,
 	markBufHandle = nil,
+	currentMarkHandle = nil,
 }
 
 --- Initializes the buffer that will be used to render within the window for the mark list
@@ -36,6 +37,9 @@ function state.add_mark(line, col, buff_name)
 	local has_dup = state.has_dup(line, col, buff_name)
 	if not has_dup then
 		table.insert(state.marks, { line = line, col = col, buff_name = buff_name })
+		-- TODO(map) Should this be removed in favor of using the marks list? Not sure why I need this map.
+		table.insert(state.markToBufMap, { line = line, col = col, buff_name = buff_name })
+		state.currentMarkHandle = #state.marks
 	end
 end
 
@@ -47,6 +51,8 @@ function state.remove_mark(idx)
 		error("Idx is out of bounds for state")
 	end
 	table.remove(state.marks, idx)
+	table.remove(state.markToBufMap, idx)
+	state.currentMarkHandle = #state.marks
 end
 
 --- Returns the user friendly text to be displayed
@@ -69,6 +75,13 @@ function state.move_mark_up(rowIdx)
 		-- Update the mark to buffer mapping
 		state.markToBufMap[rowIdx - 1] = state.markToBufMap[rowIdx]
 		state.markToBufMap[rowIdx] = tmpMarkToBuf
+
+		-- Conditionally update the current mark handle if it was moved to update highlighted row and such
+		if rowIdx == state.currentMarkHandle then
+			state.currentMarkHandle = rowIdx - 1
+		elseif rowIdx - 1 == state.currentMarkHandle then
+			state.currentMarkHandle = rowIdx
+		end
 	end
 end
 
@@ -84,6 +97,13 @@ function state.move_mark_down(rowIdx)
 		-- Update the mark to buffer mapping
 		state.markToBufMap[rowIdx + 1] = state.markToBufMap[rowIdx]
 		state.markToBufMap[rowIdx] = tmpMarkToBuf
+
+		-- Conditionally update the current mark handle if it was moved to update highlighted row and such
+		if rowIdx == state.currentMarkHandle then
+			state.currentMarkHandle = rowIdx + 1
+		elseif rowIdx + 1 == state.currentMarkHandle then
+			state.currentMarkHandle = rowIdx
+		end
 	end
 end
 
@@ -101,6 +121,20 @@ end
 function state.move_mark_down_by_num(rowIdx, numPosDown)
 	-- TODO(map) This should have a check that if the number takes you beyond the top of the list it just goes to top
 	-- Write a test for this
+end
+
+--- Moves the pointer in the stack up one
+function state.move_up_stack()
+	if state.currentMarkHandle - 1 > 0 then
+		state.currentMarkHandle = state.currentMarkHandle - 1
+	end
+end
+
+--- Moves the pointer in the stack down one
+function state.move_down_stack()
+	if state.currentMarkHandle + 1 <= #state.marks then
+		state.currentMarkHandle = state.currentMarkHandle + 1
+	end
 end
 
 --- Clears the selected row from the state

@@ -27,22 +27,6 @@ function keybindings.update_key_binding(func, custombind) end
 
 function keybindings.map_keys(buf)
 	vim.api.nvim_buf_set_keymap(buf, "n", "<leader>o", ':lua require("mark-me.markme").go_to_mark()<CR>', {})
-	-- vim.api.nvim_buf_set_keymap(buf, "n", "<CR>", ':lua require("buffer-me.bufferme").open_selected_buffer()<CR>', {})
-	-- vim.api.nvim_buf_set_keymap(
-	-- 	buf,
-	-- 	"n",
-	-- 	"f",
-	-- 	':lua require("buffer-me.bufferme").set_first_hotswap_from_window()<CR>',
-	-- 	{}
-	-- )
-	-- vim.api.nvim_buf_set_keymap(
-	-- 	buf,
-	-- 	"n",
-	-- 	"s",
-	-- 	':lua require("buffer-me.bufferme").set_second_hotswap_from_window()<CR>',
-	-- 	{}
-	-- )
-	-- vim.api.nvim_buf_set_keymap(buf, "n", "g", ':lua require("buffer-me.bufferme").go_to_buffer()<CR>', {})
 	vim.api.nvim_buf_set_keymap(buf, "n", "u", ':lua require("mark-me.keybindings").move_mark_up()<CR>', {})
 	vim.api.nvim_buf_set_keymap(buf, "n", "d", ':lua require("mark-me.keybindings").move_mark_down()<CR>', {})
 	vim.api.nvim_buf_set_keymap(buf, "n", "<leader>r", ':lua require("mark-me.keybindings").remove()<CR>', {})

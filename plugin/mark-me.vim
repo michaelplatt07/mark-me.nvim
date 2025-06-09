@@ -8,3 +8,6 @@ exe "lua package.path = package.path .. ';" . s:lua_rocks_deps_loc . "/lua-?/ini
 
 command! -nargs=0 MarkMeAdd lua require("mark-me").add_mark()
 command! -nargs=0 MarkMeOpen lua require("mark-me").open_window()
+command! -nargs=0 MarkMeGoForward lua require("mark-me").go_forward_mark()
+command! -nargs=0 MarkMeGoBack lua require("mark-me").go_back_mark()
+command! -nargs=0 MarkMeGoToMark lua require("mark-me").go_to_mark()
