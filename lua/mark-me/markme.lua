@@ -127,13 +127,13 @@ function markme.pop_and_go_back()
 			local win_handle = vim.api.nvim_get_current_win()
 			vim.api.nvim_win_close(win_handle, true)
 		end
-		state.move_up_stack()
+		-- Pop first since this will handle updating the currentMarkHandle and then we can open
+		state.pop_mark(nil)
 		local selectedRow = state.markToBufMap[state.currentMarkHandle]
 		local selected_buf_handle = vim.fn.bufnr(selectedRow["buff_name"])
 		vim.api.nvim_set_current_buf(selected_buf_handle)
 		vim.api.nvim_win_set_cursor(0, { selectedRow["line"], selectedRow["col"] })
 		state.clear_selected_row(nil)
-		state.pop_mark(nil)
 	else
 		error("Could not get to mark")
 	end
