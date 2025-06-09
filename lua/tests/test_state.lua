@@ -379,6 +379,36 @@ function TestState.go_forward_buffer_in_stack_out_of_bounds()
 	luaunit.assertEquals(state.currentMarkHandle, 4)
 end
 
+function TestState.test_pop_from_stack_nil_value()
+	table.insert(state.marks, { line = 0, col = 0, buff_name = "test_name" })
+	table.insert(state.marks, { line = 1, col = 1, buff_name = "another_name" })
+	table.insert(state.markToBufMap, { line = 0, col = 0, buff_name = "test_name" })
+	table.insert(state.markToBufMap, { line = 1, col = 1, buff_name = "another_name" })
+	state.currentMarkHandle = 2
+	luaunit.assertEquals(#state.marks, 2)
+	luaunit.assertEquals(#state.markToBufMap, 2)
+	state.pop_mark(nil)
+	luaunit.assertEquals(#state.marks, 1)
+	luaunit.assertEquals(#state.markToBufMap, 1)
+	luaunit.assertEquals(state.currentMarkHandle, 1)
+end
+
+function TestState.test_pop_from_stack_given_value()
+	table.insert(state.marks, { line = 0, col = 0, buff_name = "test_name" })
+	table.insert(state.marks, { line = 1, col = 1, buff_name = "another_name" })
+	table.insert(state.markToBufMap, { line = 0, col = 0, buff_name = "test_name" })
+	table.insert(state.markToBufMap, { line = 1, col = 1, buff_name = "another_name" })
+	state.currentMarkHandle = 2
+	luaunit.assertEquals(#state.marks, 2)
+	luaunit.assertEquals(#state.markToBufMap, 2)
+	state.pop_mark(1)
+	luaunit.assertEquals(#state.marks, 1)
+	luaunit.assertEquals(#state.markToBufMap, 1)
+	luaunit.assertEquals(state.currentMarkHandle, 1)
+	luaunit.assertEquals(state.marks[1], { line = 1, col = 1, buff_name = "another_name" })
+	luaunit.assertEquals(state.markToBufMap[1], { line = 1, col = 1, buff_name = "another_name" })
+end
+
 function TestState.test_move_mark_up_by_num()
 	-- luaunit.assertFalse("TODO(map) Implement feature to move a mark up by some number")
 end
