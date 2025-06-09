@@ -18,7 +18,6 @@ function windower.render_mark_list_lines()
 	vim.api.nvim_buf_set_option(state.markBufHandle, "modifiable", true)
 	local lines = {}
 	for idx, _ in pairs(state.marks) do
-		-- table.insert(state.markToBufMap, markInfo)
 		table.insert(lines, state.display_mark(idx))
 	end
 
@@ -32,7 +31,6 @@ function windower.re_render_mark_list_lines()
 	vim.api.nvim_buf_set_lines(state.markBufHandle, 0, -1, false, {})
 	local lines = {}
 	for idx, _ in ipairs(state.marks) do
-		-- table.insert(state.markToBufMap, markInfo)
 		table.insert(lines, state.display_mark(idx))
 	end
 
