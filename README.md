@@ -40,4 +40,4 @@ luarocks install luacov --tree=.luarocks
 then the `test.sh` file can be ran to confirm functionality
 
 ### Feature Requests/Bugs
-File on GitHub at the (link)[https://github.com/michaelplatt07/mark-me.nvim/issues]
+File on GitHub at the [link](https://github.com/michaelplatt07/mark-me.nvim/issues)
