@@ -8,7 +8,7 @@ local keybindings = {
 	go_to = { mode = "n", key = "o", func = ':lua require("mark-me.markme").go_to_mark()<CR>' },
 	move_up = { mode = "n", key = "u", func = ':lua require("mark-me.keybindings").move_mark_up()<CR>' },
 	move_down = { mode = "n", key = "d", func = ':lua require("mark-me.keybindings").move_mark_down()<CR>' },
-	remove = { mode = "n", key = "r", func = ':lua require("mark-me.keybindings").remove()<CR>' },
+	remove_mark = { mode = "n", key = "r", func = ':lua require("mark-me.keybindings").remove()<CR>' },
 }
 
 function keybindings.remove()
@@ -45,7 +45,13 @@ function keybindings.map_keys(buf)
 		keybindings.move_down.func,
 		{}
 	)
-	vim.api.nvim_buf_set_keymap(buf, keybindings.remove.mode, keybindings.remove.key, keybindings.remove.func, {})
+	vim.api.nvim_buf_set_keymap(
+		buf,
+		keybindings.remove_mark.mode,
+		keybindings.remove_mark.key,
+		keybindings.remove_mark.func,
+		{}
+	)
 	vim.api.nvim_buf_set_keymap(buf, keybindings.quit.mode, keybindings.quit.key, keybindings.quit.func, {})
 end
 
