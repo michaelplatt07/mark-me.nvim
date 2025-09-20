@@ -1,9 +1,15 @@
 local markme = require("mark-me.markme")
 local state = require("mark-me.state")
+local keybindings = require("mark-me.keybindings")
 local M = {}
 
 function M.setup(config)
 	if config ~= nil then
+		if config.keys ~= nil then
+			for func, custombind in pairs(config.keys) do
+				keybindings.update_key_binding(func, custombind)
+			end
+		end
 		if config.autopop ~= nil and config.autopop == true then
 			state.autopop = true
 		end

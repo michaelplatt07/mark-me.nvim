@@ -10,6 +10,52 @@ end, there are a few key functions that can be connected in an `init.lua` file f
 * `MarkMeGoBack` -> Moves to the previous mark in the list
 * `MarkMePopGoBack` -> Goes back to the previous mark and pops the mark off the list of managed marks
 
+When inside the window for managing the marks, the default keybindings are available to perform certain actions:
+* `o` -> Opens the current mark in the current buffer
+* `u` -> Moves the currently selected mark up in the list of ordered marks
+* `d` -> Moves the currently selected mark down in the list of ordered marks
+* `r` -> Removes the currently selected mark from the list of ordered marks
+* `q` -> Closes the manaement window
+
+These bindings can be changed by providing custom key bindings and their associated functions in the `setup` of the 
+configuration. The following example overrides the basic functionality of using `q` in normal mode to close the mark 
+management window:
+```lua
+... -- All the setup work
+{
+    keys = {
+        quit = "e",
+    }
+}
+```
+
+The full list of functions that can be overriden are listed below and are bound to normal mode. Currently there is no 
+way to change the binding or function associated with the keys:
+* quit
+* go_to
+* move_up
+* move_down
+* remove
+
+## Installation
+If using Lazy, the configuration for the plugin looks like:
+```lua
+return {
+	"michaelplatt07/mark-me.nvim",
+	branch = "main",
+	config = function()
+		local markme = require("mark-me")
+		markme.setup({
+			autopop = true,
+		})
+	end,
+}
+```
+
+The `branch` line is not necessary if the user doesn't desire to specify a particular branch or version. The `autopop`
+flag will handle removing a mark from the managed list in the event that it is jumped to as a nice to have feature, 
+though not required to run the plugin.
+
 ## Configuration
 A sample configuration (if you are using Lazy) might look something like this in the `init.lua` file:
 ```lua
