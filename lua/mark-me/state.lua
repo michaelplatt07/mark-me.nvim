@@ -5,6 +5,7 @@ local state = {
 	windowHandle = nil,
 	markBufHandle = nil,
 	currentMarkHandle = nil,
+	autopop = nil,
 }
 
 --- Initializes the buffer that will be used to render within the window for the mark list
@@ -145,6 +146,25 @@ end
 --- Updates the selected row within the mark buffer
 function state.update_selected_row()
 	state.selectedRow = state.markToBufMap[vim.api.nvim_win_get_cursor(0)[1]]
+end
+
+--- Pop the value off the stack as part of going back in the buffer stack
+--- @param selectedIdx number The index of the buffer to be popped off the stack. If nil is provided it will remove the most recently added value
+function state.pop_mark(selectedIdx)
+	if selectedIdx == nil then
+		table.remove(state.marks, #state.marks)
+		table.remove(state.markToBufMap, #state.markToBufMap)
+	else
+		table.remove(state.marks, selectedIdx)
+		table.remove(state.markToBufMap, selectedIdx)
+	end
+	state.currentMarkHandle = state.currentMarkHandle - 1
+
+	if #state.marks == 0 or #state.markToBufMap == 0 then
+		return true
+	else
+		return false
+	end
 end
 
 return state

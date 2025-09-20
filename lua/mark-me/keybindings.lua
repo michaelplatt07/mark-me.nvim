@@ -26,10 +26,10 @@ end
 function keybindings.update_key_binding(func, custombind) end
 
 function keybindings.map_keys(buf)
-	vim.api.nvim_buf_set_keymap(buf, "n", "<leader>o", ':lua require("mark-me.markme").go_to_mark()<CR>', {})
+	vim.api.nvim_buf_set_keymap(buf, "n", "o", ':lua require("mark-me.markme").go_to_mark()<CR>', {})
 	vim.api.nvim_buf_set_keymap(buf, "n", "u", ':lua require("mark-me.keybindings").move_mark_up()<CR>', {})
 	vim.api.nvim_buf_set_keymap(buf, "n", "d", ':lua require("mark-me.keybindings").move_mark_down()<CR>', {})
-	vim.api.nvim_buf_set_keymap(buf, "n", "<leader>r", ':lua require("mark-me.keybindings").remove()<CR>', {})
+	vim.api.nvim_buf_set_keymap(buf, "n", "r", ':lua require("mark-me.keybindings").remove()<CR>', {})
 	vim.api.nvim_buf_set_keymap(buf, "n", "q", ':lua require("mark-me.windower").close_window()<CR>', {})
 end
 
