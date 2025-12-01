@@ -158,7 +158,9 @@ function state.pop_mark(selectedIdx)
 		table.remove(state.marks, selectedIdx)
 		table.remove(state.markToBufMap, selectedIdx)
 	end
-	state.currentMarkHandle = state.currentMarkHandle - 1
+	if state.currentMarkHandle - 1 > 0 then
+		state.currentMarkHandle = state.currentMarkHandle - 1
+	end
 
 	if #state.marks == 0 or #state.markToBufMap == 0 then
 		return true

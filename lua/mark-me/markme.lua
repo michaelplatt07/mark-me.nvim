@@ -65,20 +65,43 @@ function markme.move_down_stack()
 	markme.go_to_mark()
 end
 
-function markme.go_to_mark()
-	if state.selectedRow then
-		local win_handle = vim.api.nvim_get_current_win()
-		vim.api.nvim_win_close(win_handle, true)
-		local selected_buf_handle = vim.fn.bufnr(state.selectedRow["buff_name"])
+-- TODO(map) This should probably have the vim.api stuff factored out so I can more easily unit test the code base
+function markme.go_to_mark(mark_num)
+	if mark_num then
+		local selectedRow = state.markToBufMap[mark_num]
+		local selected_buf_handle = vim.fn.bufnr(selectedRow["buff_name"])
 		vim.api.nvim_set_current_buf(selected_buf_handle)
-		vim.api.nvim_win_set_cursor(0, { state.selectedRow["line"], state.selectedRow["col"] })
-		state.clear_selected_row(nil)
+		vim.api.nvim_win_set_cursor(0, { selectedRow["line"], selectedRow["col"] })
+		if state.autopop then
+			state.pop_mark(mark_num)
+		end
+		state.clear_selected_row()
+	elseif state.selectedRow then
+		-- Set the current line if we have autopop so we know which line in the state to clear
+		local curr_line = nil
+		if state.autopop then
+			curr_line = vim.api.nvim_win_get_cursor(0)[1]
+		end
+
+		-- Grab the selected buffer and its info
+		local selectedRow = state.selectedRow
+		local selected_buf_handle = vim.fn.bufnr(selectedRow["buff_name"])
+		windower.close_window()
+		vim.api.nvim_set_current_buf(selected_buf_handle)
+		vim.api.nvim_win_set_cursor(0, { selectedRow["line"], selectedRow["col"] })
+		if state.autopop then
+			state.pop_mark(curr_line)
+		end
+		state.clear_selected_row()
 	elseif state.currentMarkHandle then
 		local selectedRow = state.markToBufMap[state.currentMarkHandle]
 		local selected_buf_handle = vim.fn.bufnr(selectedRow["buff_name"])
 		vim.api.nvim_set_current_buf(selected_buf_handle)
 		vim.api.nvim_win_set_cursor(0, { selectedRow["line"], selectedRow["col"] })
-		state.clear_selected_row(nil)
+		if state.autopop then
+			state.pop_mark(state.currentMarkHandle)
+		end
+		state.clear_selected_row()
 	else
 		error("Could not get to mark")
 	end
@@ -88,8 +111,7 @@ function markme.go_back_mark()
 	if state.currentMarkHandle then
 		-- Handle closing out the window first and then getting the info
 		if state.selectedRow then
-			local win_handle = vim.api.nvim_get_current_win()
-			vim.api.nvim_win_close(win_handle, true)
+			windower.close_window()
 		end
 		state.move_up_stack()
 		local selectedRow = state.markToBufMap[state.currentMarkHandle]
@@ -106,8 +128,7 @@ function markme.go_forward_mark()
 	if state.currentMarkHandle then
 		-- Handle closing out the window first and then getting the info
 		if state.selectedRow then
-			local win_handle = vim.api.nvim_get_current_win()
-			vim.api.nvim_win_close(win_handle, true)
+			windower.close_window()
 		end
 		state.move_down_stack()
 		local selectedRow = state.markToBufMap[state.currentMarkHandle]
@@ -124,8 +145,7 @@ function markme.pop_and_go_back()
 	if state.currentMarkHandle then
 		-- Handle closing out the window first and then getting the info
 		if state.selectedRow then
-			local win_handle = vim.api.nvim_get_current_win()
-			vim.api.nvim_win_close(win_handle, true)
+			windower.close_window()
 		end
 		-- Pop first since this will handle updating the currentMarkHandle and then we can open
 		local empty = state.pop_mark(nil)

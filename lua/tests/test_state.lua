@@ -125,7 +125,7 @@ function TestState.test_remove_mark_out_of_bounds()
 		state.remove_mark(10)
 	end)
 	luaunit.assertFalse(ok)
-	luaunit.assertEquals(tostring(err), "./lua/mark-me/state.lua:51: Idx is out of bounds for state")
+	luaunit.assertEquals(tostring(err), "./lua/mark-me/state.lua:52: Idx is out of bounds for state")
 	luaunit.assertEquals(state.marks[1], { line = 0, col = 0, buff_name = "test_name" })
 	luaunit.assertEquals(#state.marks, 4)
 end
@@ -393,7 +393,7 @@ function TestState.test_pop_from_stack_nil_value()
 	luaunit.assertEquals(state.currentMarkHandle, 1)
 end
 
-function TestState.test_pop_from_stack_given_value()
+function TestState.test_pop_from_stack_given_value_at_beginning()
 	table.insert(state.marks, { line = 0, col = 0, buff_name = "test_name" })
 	table.insert(state.marks, { line = 1, col = 1, buff_name = "another_name" })
 	table.insert(state.markToBufMap, { line = 0, col = 0, buff_name = "test_name" })
@@ -407,6 +407,22 @@ function TestState.test_pop_from_stack_given_value()
 	luaunit.assertEquals(state.currentMarkHandle, 1)
 	luaunit.assertEquals(state.marks[1], { line = 1, col = 1, buff_name = "another_name" })
 	luaunit.assertEquals(state.markToBufMap[1], { line = 1, col = 1, buff_name = "another_name" })
+end
+
+function TestState.test_pop_from_stack_given_value_at_end()
+	table.insert(state.marks, { line = 0, col = 0, buff_name = "test_name" })
+	table.insert(state.marks, { line = 1, col = 1, buff_name = "another_name" })
+	table.insert(state.markToBufMap, { line = 0, col = 0, buff_name = "test_name" })
+	table.insert(state.markToBufMap, { line = 1, col = 1, buff_name = "another_name" })
+	state.currentMarkHandle = 1
+	luaunit.assertEquals(#state.marks, 2)
+	luaunit.assertEquals(#state.markToBufMap, 2)
+	state.pop_mark(2)
+	luaunit.assertEquals(#state.marks, 1)
+	luaunit.assertEquals(#state.markToBufMap, 1)
+	luaunit.assertEquals(state.currentMarkHandle, 1)
+	luaunit.assertEquals(state.marks[1], { line = 0, col = 0, buff_name = "test_name" })
+	luaunit.assertEquals(state.markToBufMap[1], { line = 0, col = 0, buff_name = "test_name" })
 end
 
 function TestState.test_move_mark_up_by_num()

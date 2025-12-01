@@ -36,8 +36,9 @@ function M.go_forward_mark()
 	markme.go_forward_mark()
 end
 
-function M.go_to_mark()
-	markme.go_to_mark()
+function M.go_to_mark(arg)
+	local mark_num = tonumber(arg)
+	markme.go_to_mark(mark_num)
 end
 
 function M.pop_and_go_back()
