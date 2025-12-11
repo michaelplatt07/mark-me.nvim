@@ -14,5 +14,8 @@ export PATH="./.luarocks/bin:$PATH"
 export LUA_PATH="./.luarocks/share/lua/$VERSION_FOLDER/?.lua;./.luarocks/share/lua/$VERSION_FOLDER/?/init.lua;./lua/?.lua;$LUA_PATH"
 export LUA_CPATH="./.luarocks/lib/lua/$VERSION_FOLDER/?.so;$LUA_CPATH"
 
-lua -lluacov lua/tests/tests.lua
+./test_unit.sh
+./test_integration.sh
+
 ./.luarocks/bin/luacov -c luacov.conf
+

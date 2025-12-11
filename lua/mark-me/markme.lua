@@ -19,6 +19,7 @@ end
 function markme.remove_mark()
 	local line_num = vim.api.nvim_win_get_cursor(0)[1]
 	state.remove_mark(line_num)
+	windower.remove_highlight(line_num)
 end
 
 --- Entry point for opening window
@@ -67,11 +68,11 @@ end
 
 function markme.go_to_mark()
 	if state.selectedRow then
-		local win_handle = vim.api.nvim_get_current_win()
-		vim.api.nvim_win_close(win_handle, true)
-		local selected_buf_handle = vim.fn.bufnr(state.selectedRow["buff_name"])
+		local selectedRow = state.selectedRow
+		local selected_buf_handle = vim.fn.bufnr(selectedRow["buff_name"])
+		windower.close_window()
 		vim.api.nvim_set_current_buf(selected_buf_handle)
-		vim.api.nvim_win_set_cursor(0, { state.selectedRow["line"], state.selectedRow["col"] })
+		vim.api.nvim_win_set_cursor(0, { selectedRow["line"], selectedRow["col"] })
 		state.clear_selected_row(nil)
 	elseif state.currentMarkHandle then
 		local selectedRow = state.markToBufMap[state.currentMarkHandle]

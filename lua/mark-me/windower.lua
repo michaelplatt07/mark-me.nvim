@@ -1,6 +1,7 @@
 local state = require("mark-me.state")
 local windower = {}
 
+-- luacov: disable
 function windower.create_mark_list_window()
 	return vim.api.nvim_open_win(state.markBufHandle, true, {
 		relative = "editor",
@@ -13,6 +14,7 @@ function windower.create_mark_list_window()
 		title = "Marks",
 	})
 end
+-- luacov: enable
 
 function windower.render_mark_list_lines()
 	vim.api.nvim_buf_set_option(state.markBufHandle, "modifiable", true)
