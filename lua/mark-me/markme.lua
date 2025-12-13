@@ -19,6 +19,7 @@ end
 function markme.remove_mark()
 	local line_num = vim.api.nvim_win_get_cursor(0)[1]
 	state.remove_mark(line_num)
+	windower.remove_highlight(line_num)
 end
 
 --- Entry point for opening window
@@ -65,7 +66,6 @@ function markme.move_down_stack()
 	markme.go_to_mark()
 end
 
--- TODO(map) This should probably have the vim.api stuff factored out so I can more easily unit test the code base
 function markme.go_to_mark(mark_num)
 	if mark_num then
 		local selectedRow = state.markToBufMap[mark_num]
