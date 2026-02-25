@@ -1,10 +1,10 @@
 local state = {
 	marks = {},
-	selectedRow = nil,
+	selectedRowNumber = nil,
 	windowHandle = nil,
 	markBufHandle = nil,
 	currentMarkHandle = nil,
-	autopop = nil,
+	autopop = false,
 }
 
 --- Initializes the buffer that will be used to render within the window for the mark list
@@ -106,7 +106,7 @@ end
 
 --- Clears the selected row from the state
 function state.clear_selected_row()
-	state.selectedRow = nil
+	state.selectedRowNumber = nil
 end
 
 -- luacov: enable

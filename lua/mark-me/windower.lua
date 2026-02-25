@@ -24,7 +24,7 @@ function windower.render_mark_list_lines()
 	end
 
 	vim.api.nvim_buf_set_lines(state.markBufHandle, 0, #lines, false, lines)
-	if #state.marks > 0 and #state.markToBufMap > 0 then
+	if #state.marks > 0 then
 		windower.highlight_current_mark(state.currentMarkHandle)
 	end
 	vim.api.nvim_buf_set_option(state.markBufHandle, "modifiable", false)
@@ -46,8 +46,9 @@ function windower.re_render_mark_list_lines()
 end
 
 function windower.close_window()
+	-- TODO(map) This is another example of Feature #10 that should be fixed. The windower shouldn't cal the state, it
+	-- should only handle windowing stuff.
 	-- Clean up the state
-	state.bufNumToLineNumMap = {}
 	state.clear_selected_row()
 
 	-- Reset modifiable flag so the buffer can be updated on the next search
