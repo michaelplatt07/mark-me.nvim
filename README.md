@@ -4,11 +4,14 @@ A simple plugin for managing marks within buffers in NeoVim.
 ## Features
 The plugin is designed to offer the ability to track marks to be able to be easily jump between within NeoVim. To that 
 end, there are a few key functions that can be connected in an `init.lua` file for easy use:
-* `MarkMeAdd` -> Function to add a mark to the list of marks. This adds both the row and column position of the cursor
-* `MarkMeOpen` -> Opens the marke managment window
-* `MarkMeGoForward` -> Moves to the next mark in the list
-* `MarkMeGoBack` -> Moves to the previous mark in the list
-* `MarkMePopGoBack` -> Goes back to the previous mark and pops the mark off the list of managed marks
+Below is a list of commands that are exposed as features for the plugin:
+| Command | Functionality |
+|---------|---------------|
+| `MarkMeAdd` | Adds the position of the cursor and buffer as a mark to be tracked |
+| `MarkMeOpen` | Opens the markme managment window |
+| `MarkMeGoForward` | Moves to the next mark in the list |
+| `MarkMeGoBack` | Moves to the previous mark in the list and pops the mark from the list if `autopop` is enabled |
+| `MarkMeGoBackNoPop` | Like `MarkMeGoback` except will never pop regardless of flag |
 
 ## Installation
 If using Lazy, the configuration for the plugin looks like:
@@ -30,12 +33,15 @@ flag will handle removing a mark from the managed list in the event that it is j
 though not required to run the plugin.
 
 ## Keybindings
-When inside the window for managing the marks, the default keybindings are available to perform certain actions:
-* `o` -> Opens the current mark in the current buffer
-* `u` -> Moves the currently selected mark up in the list of ordered marks
-* `d` -> Moves the currently selected mark down in the list of ordered marks
-* `r` -> Removes the currently selected mark from the list of ordered marks
-* `q` -> Closes the manaement window
+Below is a list of keybindings that are set by default to the scope of the preview windows created by the plugin:
+| Mode | Binding | Functionality |
+|------|---------|---------------|
+| `n` | `q` | Closes the plugin window |
+| `n` | `o` | Goes the currently highlighted mark |
+| `n` | `g` | Go to the seleted mark and do no pop no matter the setting |
+| `n` | `u` | Moves the makr up the list of marks |
+| `n` | `d` | Moves the mark down the list of marks |
+| `n` | `r` | Removes the mark from the list |
 
 ### Overriding for Custom Keybindings
 These bindings can be changed by providing custom key bindings and their associated functions in the `setup` of the 
@@ -50,15 +56,7 @@ management window:
 }
 ```
 
-The full list of functions that can be overriden are listed below and are bound to normal mode. Currently there is no 
-way to change the binding or function associated with the keys:
-* quit
-* go_to
-* move_up
-* move_down
-* remove
-
-## Configuration
+## Plugin Use
 A sample configuration (if you are using Lazy) might look something like this in the `init.lua` file:
 ```lua
 -- Set adding the current cursor to plugin to manage
@@ -76,16 +74,19 @@ end
 vim.keymap.set("n", "md", mark_go_to_def)
 ```
 
-## Test Suite
-This plugin comes with a test suite that can be ran but will required some dependencies to be installed first. Run the
-following commands to set up the project for testing:
+This plugin comes with a test suite that can be ran but will required some dependencies to be installed first. The plugin
+will need luarock installed in some way: 
 ```bash
 sudo apt-get install luarocks
-cd mark-me.nvim
-luarocks install luaunit --tree=.luarocks
+```
+For the purposes of keeping depdencies separate, the required rocks can be installed locally at the root level of the plugin:
+```bash
+cd preview-me.nvim
+luarocks install busted --tree=.luarocks
 luarocks install luacov --tree=.luarocks
 ```
-then the `test.sh` file can be ran to confirm functionality
+The plugin will also need `plenary.nvim` in the same directory as the root of this plugin to be able to run integration
+tests. Then test can be ran with the `Makefile` with any of the commands listed.
 
 ### Feature Requests/Bugs
-File on GitHub at the [link](https://github.com/michaelplatt07/mark-me.nvim/issues)
+If you find a bug or have a request for a feature feel free to add them in GitHub under the issue tracker

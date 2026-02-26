@@ -25,19 +25,15 @@ function M.open_window()
 end
 
 function M.go_back_mark()
-	if state.autopop then
-		markme.pop_and_go_back()
-	else
-		markme.go_back_mark()
-	end
+	markme.go_back_mark(state.autopop)
+end
+
+function M.go_back_mark_no_pop()
+	markme.go_back_mark(false)
 end
 
 function M.go_forward_mark()
 	markme.go_forward_mark()
-end
-
-function M.pop_and_go_back()
-	markme.pop_and_go_back()
 end
 
 return M

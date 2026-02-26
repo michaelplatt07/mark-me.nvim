@@ -66,4 +66,105 @@ describe("mark-me.markme", function()
 			assert.is_equal(state.currentMarkHandle, 1)
 		end)
 	end)
+
+	describe("markme.go_back_mark", function()
+		it("Should go back one mark in the list and not pop the previous item", function()
+			-- Create temp buffers to be swapped to on go_to
+			local bufOne = vim.api.nvim_create_buf(false, true)
+			vim.api.nvim_buf_set_name(bufOne, "Sample Buf 1")
+			local bufTwo = vim.api.nvim_create_buf(false, true)
+			vim.api.nvim_buf_set_name(bufTwo, "Sample Buf 2")
+
+			-- Set up the state to render the first time.
+			state.currentMarkHandle = 2
+			state.marks =
+				{ { line = 1, col = 1, buff_name = "Sample Buf 1" }, { line = 2, col = 2, buff_name = "Sample Buf 2" } }
+
+			-- Make the call
+			markme.go_back_mark(false)
+
+			-- Confirm the marks has not been modified
+			assert.is_equal(state.currentMarkHandle, 1)
+			assert.is_equal(#state.marks, 2)
+		end)
+
+		it("Should go back one mark in the list and pop the previous item", function()
+			-- Create temp buffers to be swapped to on go_to
+			local bufOne = vim.api.nvim_create_buf(false, true)
+			vim.api.nvim_buf_set_name(bufOne, "Sample Buf 1")
+			local bufTwo = vim.api.nvim_create_buf(false, true)
+			vim.api.nvim_buf_set_name(bufTwo, "Sample Buf 2")
+
+			-- Set up the state to render the first time.
+			state.currentMarkHandle = 2
+			state.marks =
+				{ { line = 1, col = 1, buff_name = "Sample Buf 1" }, { line = 2, col = 2, buff_name = "Sample Buf 2" } }
+
+			-- Make the call
+			markme.go_back_mark(true)
+
+			-- Confirm the marks has not been modified
+			assert.is_equal(state.currentMarkHandle, 1)
+			assert.is_equal(#state.marks, 1)
+		end)
+
+		it("Should not go back because the mark is the highest in the list", function()
+			-- Create temp buffers to be swapped to on go_to
+			local bufOne = vim.api.nvim_create_buf(false, true)
+			vim.api.nvim_buf_set_name(bufOne, "Sample Buf 1")
+			local bufTwo = vim.api.nvim_create_buf(false, true)
+			vim.api.nvim_buf_set_name(bufTwo, "Sample Buf 2")
+
+			-- Set up the state to render the first time.
+			state.currentMarkHandle = 1
+			state.marks =
+				{ { line = 1, col = 1, buff_name = "Sample Buf 1" }, { line = 2, col = 2, buff_name = "Sample Buf 2" } }
+
+			-- Make the call
+			markme.go_back_mark()
+
+			-- Confirm the marks has not been modified
+			assert.is_equal(state.currentMarkHandle, 1)
+		end)
+	end)
+
+	describe("markme.go_forward_mark", function()
+		it("Should go forward one mark in the list", function()
+			-- Create temp buffers to be swapped to on go_to
+			local bufOne = vim.api.nvim_create_buf(false, true)
+			vim.api.nvim_buf_set_name(bufOne, "Sample Buf 1")
+			local bufTwo = vim.api.nvim_create_buf(false, true)
+			vim.api.nvim_buf_set_name(bufTwo, "Sample Buf 2")
+
+			-- Set up the state to render the first time.
+			state.currentMarkHandle = 1
+			state.marks =
+				{ { line = 1, col = 1, buff_name = "Sample Buf 1" }, { line = 1, col = 1, buff_name = "Sample Buf 2" } }
+
+			-- Make the call
+			markme.go_forward_mark()
+
+			-- Confirm the marks has not been modified
+			assert.is_equal(state.currentMarkHandle, 2)
+		end)
+
+		it("Should not go forward because the mark is the highest in the list", function()
+			-- Create temp buffers to be swapped to on go_to
+			local bufOne = vim.api.nvim_create_buf(false, true)
+			vim.api.nvim_buf_set_name(bufOne, "Sample Buf 1")
+			local bufTwo = vim.api.nvim_create_buf(false, true)
+			vim.api.nvim_buf_set_name(bufTwo, "Sample Buf 2")
+
+			-- Set up the state to render the first time.
+			state.currentMarkHandle = 2
+			state.marks =
+				{ { line = 1, col = 1, buff_name = "Sample Buf 1" }, { line = 1, col = 1, buff_name = "Sample Buf 2" } }
+
+			-- Make the call
+			markme.go_forward_mark()
+
+			-- Confirm the marks has not been modified
+			assert.is_equal(state.currentMarkHandle, 2)
+		end)
+	end)
 end)
