@@ -20,7 +20,6 @@ describe("mark-me.windower", function()
 
 			-- Set up the state as it would be for when a render is called and no highlight would be needed
 			state.marks = {}
-			state.markToBufMap = {}
 
 			-- Call the render
 			windower.render_mark_list_lines()
@@ -59,8 +58,6 @@ describe("mark-me.windower", function()
 			-- Set up the state to render the first time.
 			state.currentMarkHandle = 2
 			state.marks =
-				{ { line = 1, col = 1, buff_name = "Sample Buf 1" }, { line = 2, col = 2, buff_name = "Sample Buf 2" } }
-			state.markToBufMap =
 				{ { line = 1, col = 1, buff_name = "Sample Buf 1" }, { line = 2, col = 2, buff_name = "Sample Buf 2" } }
 
 			-- Call the render
