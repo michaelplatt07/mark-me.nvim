@@ -38,7 +38,7 @@ end
 function keybindings.map_keys(buf)
 	vim.keymap.set(keybindings.go_to_no_pop.mode, keybindings.go_to_no_pop.key, function()
 		require("mark-me.markme").go_to_mark(false)
-	end, { buffer = buf, expr = true, noremap = true, silent = true })
+	end, { buffer = buf })
 	vim.keymap.set(keybindings.go_to.mode, keybindings.go_to.key, function()
 		require("mark-me.markme").go_to_mark(state.autopop)
 	end, { buffer = buf })
