@@ -1,11 +1,10 @@
 local state = {
 	marks = {},
-	markToBufMap = {},
-	selectedRow = nil,
+	selectedRowNumber = nil,
 	windowHandle = nil,
 	markBufHandle = nil,
 	currentMarkHandle = nil,
-	autopop = nil,
+	autopop = false,
 }
 
 --- Initializes the buffer that will be used to render within the window for the mark list
@@ -38,8 +37,6 @@ function state.add_mark(line, col, buff_name)
 	local has_dup = state.has_dup(line, col, buff_name)
 	if not has_dup then
 		table.insert(state.marks, { line = line, col = col, buff_name = buff_name })
-		-- TODO(map) Should this be removed in favor of using the marks list? Not sure why I need this map.
-		table.insert(state.markToBufMap, { line = line, col = col, buff_name = buff_name })
 		state.currentMarkHandle = #state.marks
 	end
 end
@@ -47,21 +44,8 @@ end
 --- Removes the given mark from the state
 ---@param idx number The mark that should be removed from the list of marks
 function state.remove_mark(idx)
-	if idx > #state.marks then
-		-- TODO(map) This should probably be better but for now would be ok
-		error("Idx is out of bounds for state")
-	end
 	table.remove(state.marks, idx)
-	table.remove(state.markToBufMap, idx)
 	state.currentMarkHandle = #state.marks
-end
-
---- Returns the user friendly text to be displayed
----@param idx number The index of the row to show
-function state.display_mark(idx)
-	-- TODO(map) Should we return an error here if the index is out of bounds?
-	local mark_info = state.marks[idx]
-	return string.format("%d | %d | %s", mark_info.line, mark_info.col, mark_info.buff_name)
 end
 
 --- Moves marks up in the list
@@ -69,13 +53,9 @@ end
 function state.move_mark_up(rowIdx)
 	if rowIdx - 1 > 0 then
 		local tmpMark = state.marks[rowIdx - 1]
-		local tmpMarkToBuf = state.markToBufMap[rowIdx - 1]
 		-- Update the marks list
 		state.marks[rowIdx - 1] = state.marks[rowIdx]
 		state.marks[rowIdx] = tmpMark
-		-- Update the mark to buffer mapping
-		state.markToBufMap[rowIdx - 1] = state.markToBufMap[rowIdx]
-		state.markToBufMap[rowIdx] = tmpMarkToBuf
 
 		-- Conditionally update the current mark handle if it was moved to update highlighted row and such
 		if rowIdx == state.currentMarkHandle then
@@ -91,13 +71,9 @@ end
 function state.move_mark_down(rowIdx)
 	if rowIdx + 1 <= #state.marks then
 		local tmpMark = state.marks[rowIdx + 1]
-		local tmpMarkToBuf = state.markToBufMap[rowIdx + 1]
 		-- Update the marks list
 		state.marks[rowIdx + 1] = state.marks[rowIdx]
 		state.marks[rowIdx] = tmpMark
-		-- Update the mark to buffer mapping
-		state.markToBufMap[rowIdx + 1] = state.markToBufMap[rowIdx]
-		state.markToBufMap[rowIdx] = tmpMarkToBuf
 
 		-- Conditionally update the current mark handle if it was moved to update highlighted row and such
 		if rowIdx == state.currentMarkHandle then
@@ -108,65 +84,31 @@ function state.move_mark_down(rowIdx)
 	end
 end
 
---- Moves a mark up in the list by a number
---- @param rowIdx number The current row that will be moved up by one
---- @param numPosUp number The amount of rows that the mark should be moved up
-function state.move_mark_up_by_num(rowIdx, numPosUp)
-	-- TODO(map) This should have a check that if the number takes you beyond the top of the list it just goes to top
-	-- Write a test for this
-end
+--- Pop the value off the stack as part of going back in the buffer stack
+--- @param selectedIdx number The index of the buffer to be popped off the stack. If nil is provided it will remove the most recently added value
+function state.pop_mark(selectedIdx)
+	table.remove(state.marks, selectedIdx)
 
---- Moves a mark down in the list by a number
---- @param rowIdx number The current row that will be moved down by one
---- @param numPosDown number The amount of rows that the mark should be moved up
-function state.move_mark_down_by_num(rowIdx, numPosDown)
-	-- TODO(map) This should have a check that if the number takes you beyond the top of the list it just goes to top
-	-- Write a test for this
-end
-
---- Moves the pointer in the stack up one
-function state.move_up_stack()
 	if state.currentMarkHandle - 1 > 0 then
 		state.currentMarkHandle = state.currentMarkHandle - 1
 	end
 end
 
---- Moves the pointer in the stack down one
-function state.move_down_stack()
-	if state.currentMarkHandle + 1 <= #state.marks then
-		state.currentMarkHandle = state.currentMarkHandle + 1
-	end
+-- luacov: disable
+
+--- Returns the user friendly text to be displayed
+---@param idx number The index of the row to show
+function state.display_mark(idx)
+	-- TODO(map) Should we return an error here if the index is out of bounds?
+	local mark_info = state.marks[idx]
+	return string.format("%d | %d | %s", mark_info.line, mark_info.col, mark_info.buff_name)
 end
 
 --- Clears the selected row from the state
 function state.clear_selected_row()
-	state.selectedRow = nil
+	state.selectedRowNumber = nil
 end
 
---- Updates the selected row within the mark buffer
-function state.update_selected_row()
-	state.selectedRow = state.markToBufMap[vim.api.nvim_win_get_cursor(0)[1]]
-end
-
---- Pop the value off the stack as part of going back in the buffer stack
---- @param selectedIdx number The index of the buffer to be popped off the stack. If nil is provided it will remove the most recently added value
-function state.pop_mark(selectedIdx)
-	if selectedIdx == nil then
-		table.remove(state.marks, #state.marks)
-		table.remove(state.markToBufMap, #state.markToBufMap)
-	else
-		table.remove(state.marks, selectedIdx)
-		table.remove(state.markToBufMap, selectedIdx)
-	end
-	if state.currentMarkHandle - 1 > 0 then
-		state.currentMarkHandle = state.currentMarkHandle - 1
-	end
-
-	if #state.marks == 0 or #state.markToBufMap == 0 then
-		return true
-	else
-		return false
-	end
-end
+-- luacov: enable
 
 return state
